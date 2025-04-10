@@ -9,8 +9,7 @@
 int Fact(int n)
 {
     int ret = 1;
-
-    for (int i = 2; i <= n; i ++) {
+    for (int i = 2; i <= n; i ++) { // 从2开始计算，因为1的阶乘为1可以直接返回
         ret *= i;
     }
 
@@ -27,17 +26,15 @@ int Fact(int n)
         labeledNums: 相关数据
 返回值：无
 */
-void Fill(int** perm, int permSize, int targetLen, int nowLen, LabeledNums* labeledNums)
+void Fill(int **perm, int permSize, int targetLen, int nowLen, LabeledNums *labeledNums)
 {
     // 入参检查
     if (nowLen >= targetLen) {
         return;
     }
-
     // 计算 每个字母需要填充的个数 = 总共需要填充的大小 / 剩余字母数
     int remainNum = targetLen - nowLen;
     int fillNum = permSize / remainNum;
-
     // 填充
     int iFill = 0; // 记录当前已经填充完毕几个数字
     for (int i = 0; i < labeledNums->numsSize; i++) {
@@ -72,44 +69,66 @@ void Fill(int** perm, int permSize, int targetLen, int nowLen, LabeledNums* labe
         returnColumnSizes: 所返回的各个排列的大小
 返回值：所有排列组成的数组
 */
-int** Permute(int* nums, int numsSize, int* returnSize, int** returnColumnSizes)
+int** Permute(int *nums, int numsSize, int *returnSize, int **returnColumnSizes)
 {
     // 计算返回的排列个数，返回值的Size数组初始化
     *returnSize = Fact(numsSize);
-    *returnColumnSizes = (int*)malloc(sizeof(int) * (*returnSize));
+    *returnColumnSizes = malloc(sizeof(int) * (*returnSize));
     if (returnColumnSizes == NULL) {
         printf("malloc failed!");
         return NULL;
     }
-
     // 初始化返回值列表以及返回值的列大小
-    int** ret = (int**)malloc(sizeof(int*) * (*returnSize));
+    int **ret = malloc(sizeof(int*) * (*returnSize));
     if (ret == NULL) {
+        // 释放已经分配的内存
+        free(returnColumnSizes[0]);
+        // 打印错误信息
         printf("malloc failed!");
         return NULL;
     }
     for (int i = 0; i < *returnSize; i++) {
         returnColumnSizes[0][i] = numsSize;
-        ret[i] = (int*)malloc(sizeof(int) * numsSize);
+        ret[i] = malloc(sizeof(int) * numsSize);
         if (ret[i] == NULL) {
+            // 释放已经分配的内存
+            for (int j = 0; j < i; j++) {
+                free(ret[j]);
+            }
+            free(ret);
+            free(returnColumnSizes[0]);
+            // 打印错误信息
             printf("malloc failed!");
             return NULL;
         }
     }
-
     // 初始化标记数组，并赋全0值
-    bool* isUsed = (bool*)malloc(sizeof(bool) * numsSize);
+    bool *isUsed = malloc(sizeof(bool) * numsSize);
     if (isUsed == NULL) {
+        // 释放已经分配的内存
+        for (int i = 0; i < *returnSize; i++) {
+            free(ret[i]);
+        }
+        free(ret);
+        free(returnColumnSizes[0]);
+        // 打印错误信息
         printf("malloc failed!");
         return NULL;
     }
     for (int i = 0; i < numsSize; i++) {
         isUsed[i] = false;
     }
-
     // 填充返回列表
-    LabeledNums* labeledNums = (LabeledNums*)malloc(sizeof(LabeledNums));
+    LabeledNums *labeledNums = malloc(sizeof(LabeledNums));
     if (labeledNums == NULL) {
+        // 释放已经分配的内存
+        free(isUsed);
+        for (int i = 0; i < *returnSize; i++) {
+            free(ret[i]);
+        }
+        free(ret);
+        free(returnColumnSizes[0]);
+        // 打印错误信息
         printf("malloc failed!");
         return NULL;
     }
@@ -117,6 +136,10 @@ int** Permute(int* nums, int numsSize, int* returnSize, int** returnColumnSizes)
     labeledNums->isUsed = isUsed;
     labeledNums->numsSize = numsSize;
     Fill(ret, *returnSize, numsSize, 0, labeledNums);
+    // 释放标记数组的内存
+    free(isUsed);
+    // 释放标记结构体的内存
+    free(labeledNums);
 
     return ret;
 }
