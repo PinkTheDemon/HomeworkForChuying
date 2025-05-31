@@ -1,0 +1,10 @@
+^E:\CODE\HOMEWORK6_7\BUILD\CMAKEFILES\FDFE1D3BFE36A9B987CB41ABED83194D\GENERATE.STAMP.RULE
+setlocal
+E:\CMake\bin\cmake.exe -SE:/code/homework6_7 -BE:/code/homework6_7/build --check-stamp-list CMakeFiles/generate.stamp.list --vs-solution-file E:/code/homework6_7/build/MiniLog.sln
+if %errorlevel% neq 0 goto :cmEnd
+:cmEnd
+endlocal & call :cmErrorLevel %errorlevel% & goto :cmDone
+:cmErrorLevel
+exit /b %1
+:cmDone
+if %errorlevel% neq 0 goto :VCEnd

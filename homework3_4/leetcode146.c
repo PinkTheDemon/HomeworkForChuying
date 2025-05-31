@@ -2,20 +2,29 @@
 
 #include "leetcode146.h"
 
-LRUCache *lRUCacheCreate(int capacity) {
-    LRUCache *cache = (LRUCache *)malloc(sizeof(LRUCache));
+LRUCache *lRUCacheCreate(int capacity)
+{
+    LRUCache *cache = malloc(sizeof(LRUCache));
+    if (NULL == cache) {
+        return NULL;
+    }
     cache->capacity = capacity;
     cache->size = 0;
     cache->head = NULL;
     cache->tail = NULL;
-    cache->hashmap = (Node **)malloc(sizeof(Node *) * capacity);
+    cache->hashmap = malloc(sizeof(Node *) * capacity);
+    if (NULL == cache->hashmap) {
+        free(cache);
+        return NULL;
+    }
     for (int i = 0; i < capacity; i++) {
         cache->hashmap[i] = NULL;
     }
     return cache;
 }
 
-int lRUCacheGet(LRUCache *obj, int key) {
+int lRUCacheGet(LRUCache *obj, int key)
+{
     int index = key % obj->capacity;
     Node *node = obj->hashmap[index];
     if (node == NULL) {
@@ -25,7 +34,8 @@ int lRUCacheGet(LRUCache *obj, int key) {
     return node->value;
 }
 
-void lRUCachePut(LRUCache *obj, int key, int value) {
+void lRUCachePut(LRUCache *obj, int key, int value)
+{
     int index = key % obj->capacity;
     Node *node = obj->hashmap[index];
     if (node != NULL) {
@@ -50,7 +60,8 @@ void lRUCachePut(LRUCache *obj, int key, int value) {
     obj->size++;
 }
 
-void lRUCacheFree(LRUCache *obj) {
+void lRUCacheFree(LRUCache *obj)
+{
     Node *current = obj->head;
     while (current != NULL) {
         Node *temp = current;

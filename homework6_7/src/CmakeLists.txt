@@ -1,0 +1,9 @@
+add_library(minilog STATIC
+    logger.c
+    utils.c
+    sort_search.c
+)
+
+# 为 main 程序添加执行文件（可选）
+add_executable(minilog_main main.c)
+target_link_libraries(minilog_main minilog)
